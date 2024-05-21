@@ -3,8 +3,16 @@ use std::io::{self, BufRead, Write};
 use libc::signal;
 use libc::SIGPIPE;
 use libc::SIG_IGN;
+use std::env;
 
 fn main() {
+    // Check for --version flag
+    let args: Vec<String> = env::args().collect();
+    if args.len() > 1 && args[1] == "--version" {
+        println!("{}", env!("CARGO_PKG_VERSION"));
+        return;
+    }
+
     // Allow unsafe because we close the pipe
     unsafe {
         signal(SIGPIPE, SIG_IGN);
