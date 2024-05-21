@@ -23,6 +23,18 @@ $ cd `ls -1 | pick`
 ```
 ![Pick](images/pick2.png?raw=true "Pick")
 
+You can turn just about any command into an interactive command:
+```
+$ alias gb="git checkout \$(git branch -a | pick)"
+$ gb
+·   main
+M	README.md
+Switched to branch 'main'
+Your branch is up to date with 'origin/main'.
+```
+![Pick](images/pick3.png?raw=true "Pick")
+
+
 Pick allows you to pipe in any newline separated data and waits for you to make your selection before passing your decision to the next tool in your piped command chain.
 
 Enjoy!
