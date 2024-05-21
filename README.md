@@ -4,10 +4,14 @@ Pick fills a gap in my terminal that maybe you didn't even know you had.
 
 Have you ever wished you could do something as simple as pick a hostname from a list?
 ```
-$ cat hosts.txt | pick | xargs -I {} ssh -tt {}
-· 192.168.32.124
+$ ssh `cat hosts.txt | pick`
+›
+❯ admin@pikube1
+  192.168.1.100
+  foobar.local
+  ec2-user@111.222.333.444
 ```
-![Pick](images/pick1.png?raw=true "Pick")
+![Pick](images/pick1b.png?raw=true "Pick")
 
 I bet you can find all kinds of uses for pick:
 ```
