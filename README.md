@@ -9,6 +9,16 @@ $ cat hosts.txt | pick | xargs -I {} ssh -tt {}
 ```
 ![Pick](images/pick1.png?raw=true "Pick")
 
+I bet you can find all kinds of uses for pick:
+```
+$ cd `ls -1 | pick`
+› g
+❯ git
+  go
+  miniforge3
+```
+![Pick](images/pick2.png?raw=true "Pick")
+
 Pick allows you to pipe in any newline separated data and waits for you to make your selection before passing your decision to the next tool in your piped command chain.
 
 Enjoy!
