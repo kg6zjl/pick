@@ -9,7 +9,7 @@ $ cat hosts.txt | pick | xargs -I {} ssh -tt {}
 ```
 ![Pick](images/pick1.png?raw=true "Pick")
 
-Pick allows you to pipe in any newline seperated data and waits for you to make your selection before passing your decision to the next tool in your piped command chain.
+Pick allows you to pipe in any newline separated data and waits for you to make your selection before passing your decision to the next tool in your piped command chain.
 
 Enjoy!
 
