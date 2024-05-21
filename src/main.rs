@@ -1,14 +1,23 @@
-use dialoguer::Select;
+use dialoguer::{theme::ColorfulTheme, FuzzySelect};
+use std::io::{self, BufRead, Write};
+use libc::signal;
+use libc::SIGPIPE;
+use libc::SIG_IGN;
 
 fn main() {
+    // Allow unsafe because we close the pipe
+    unsafe {
+        signal(SIGPIPE, SIG_IGN);
+    }
+
     // Read input from stdin (piped input)
     let input_text = read_input_from_stdin();
 
     // Parse the input into a list of options
     let options: Vec<&str> = input_text.split('\n').collect();
 
-    // Prompt the user to select an option
-    let selected_option = Select::new()
+    // Prompt the user to select an option using fuzzy search
+    let selected_option = FuzzySelect::with_theme(&ColorfulTheme::default())
         .items(&options)
         .default(0) // Set the default selection (optional)
         .interact()
@@ -16,11 +25,11 @@ fn main() {
 
     // Print the selected option
     println!("{}", options[selected_option]);
+    // Flush stdout
+    io::stdout().flush().unwrap();
 
     // You can now pass the selected option to the next part of your pipeline
 }
-
-use std::io::{self, BufRead};
 
 fn read_input_from_stdin() -> String {
     let mut input_text = String::new();
