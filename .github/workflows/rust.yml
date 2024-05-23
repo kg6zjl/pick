@@ -42,6 +42,11 @@ jobs:
           toolchain: stable # Specify the toolchain here, e.g., stable, nightly, or a specific version
           target: ${{ matrix.target }}
           override: true
+      - name: Install Docker
+        if: runner.os == 'macOS'
+        run: |
+          brew install --cask docker
+          open /Applications/Docker.app
       - name: Build
         run: |
           cargo build --verbose --target ${{ matrix.target }}
