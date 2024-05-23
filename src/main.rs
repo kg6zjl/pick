@@ -1,8 +1,4 @@
-extern crate termios;
-
 use dialoguer::{theme::ColorfulTheme, FuzzySelect};
-use termios::{Termios, tcsetattr, TCSANOW};
-use std::os::unix::io::AsRawFd;
 use std::io::{self, BufRead, Write};
 use signal_hook::iterator::Signals;
 use libc::signal;
@@ -12,17 +8,12 @@ use libc::SIG_IGN;
 use std::env;
 use std::thread;
 
-fn main() {
-    let stdout = io::stdout();
-    let fd = stdout.as_raw_fd();
-    // Save the current terminal settings
-    let original_termios = Termios::from_fd(fd).unwrap();
-
+fn main() -> Result<(), std::io::Error> {
     // Check for --version flag
     let args: Vec<String> = env::args().collect();
     if args.len() > 1 && args[1] == "--version" {
         println!("{}", env!("CARGO_PKG_VERSION"));
-        return;
+        return Ok(());
     }
 
     // Set up the signal handler
@@ -30,13 +21,6 @@ fn main() {
     thread::spawn(move || {
         for sig in signals.forever() {
             if sig == SIGINT {
-                // Reset the terminal to the original settings
-                tcsetattr(fd, TCSANOW, &original_termios).unwrap();
-                
-                // Make the cursor visible
-                print!("\x1B[?25h"); // ANSI escape code to show the cursor
-                io::stdout().flush().unwrap();
-                
                 // Clean exit code
                 std::process::exit(0);
             }
@@ -68,16 +52,18 @@ fn main() {
             Ok(selected) => selected,
             Err(_e) => {
                 // fail silently if SIGINT received while making a selection
-                return; // Exit the program or handle the error as needed
+                return Ok(()); // Exit the program or handle the error as needed
             }
     };
 
     // Print the selected option
     println!("{}", options[selected_option]);
+
     // Flush stdout
     io::stdout().flush().unwrap();
 
-    // You can now pass the selected option to the next part of your pipeline
+    // Goodbye!
+    Ok(())
 }
 
 fn read_input_from_stdin() -> String {
