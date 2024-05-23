@@ -4,9 +4,9 @@ version = "0.3.0"
 edition = "2021"
 
 [dependencies]
+clap = "4.5.4"
 libc = "0.2"
 signal-hook = "0.3.17"
-termios = "0.3.3"
 
 [dependencies.dialoguer]
 version = "0.11.0"

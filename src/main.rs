@@ -1,4 +1,5 @@
 use dialoguer::{theme::ColorfulTheme, FuzzySelect};
+use clap::{Arg, ArgMatches, Command};
 use std::io::{self, BufRead, Write};
 use signal_hook::iterator::Signals;
 use libc::signal;
@@ -9,12 +10,8 @@ use std::env;
 use std::thread;
 
 fn main() -> Result<(), std::io::Error> {
-    // Check for --version flag
-    let args: Vec<String> = env::args().collect();
-    if args.len() > 1 && args[1] == "--version" {
-        println!("{}", env!("CARGO_PKG_VERSION"));
-        return Ok(());
-    }
+    // Call the args handler
+    let _args = args_handler();
 
     // Set up the signal handler
     let mut signals = Signals::new(&[SIGINT]).unwrap();
@@ -64,6 +61,16 @@ fn main() -> Result<(), std::io::Error> {
 
     // Goodbye!
     Ok(())
+}
+
+fn args_handler() -> ArgMatches {
+    let matches = Command::new("Pick")
+        .version(env!("CARGO_PKG_VERSION"))
+        .author("Steve Arnett steven.arnett@protonmail.com")
+        .about("Pick allows you to pipe in any newline separated data and waits for you to make your selection before passing your decision to the next tool in your piped command chain.")
+        .get_matches();
+
+    return matches
 }
 
 fn read_input_from_stdin() -> String {
