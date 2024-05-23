@@ -1,17 +1,28 @@
 use dialoguer::{theme::ColorfulTheme, FuzzySelect};
+use clap::{Arg, ArgMatches, Command};
 use std::io::{self, BufRead, Write};
+use signal_hook::iterator::Signals;
 use libc::signal;
+use libc::SIGINT;
 use libc::SIGPIPE;
 use libc::SIG_IGN;
 use std::env;
+use std::thread;
 
-fn main() {
-    // Check for --version flag
-    let args: Vec<String> = env::args().collect();
-    if args.len() > 1 && args[1] == "--version" {
-        println!("{}", env!("CARGO_PKG_VERSION"));
-        return;
-    }
+fn main() -> Result<(), std::io::Error> {
+    // Call the args handler
+    let _args = args_handler();
+
+    // Set up the signal handler
+    let mut signals = Signals::new(&[SIGINT]).unwrap();
+    thread::spawn(move || {
+        for sig in signals.forever() {
+            if sig == SIGINT {
+                // Clean exit code
+                std::process::exit(0);
+            }
+        }
+    });
 
     // Allow unsafe because we close the pipe
     unsafe {
@@ -21,22 +32,45 @@ fn main() {
     // Read input from stdin (piped input)
     let input_text = read_input_from_stdin();
 
-    // Parse the input into a list of options
-    let options: Vec<&str> = input_text.split('\n').collect();
+    // Parse the input into a list of options, excluding empty lines
+    let options: Vec<String> = input_text
+        .lines()
+        .map(|line| line.trim().to_string()) // Trims whitespace from each line
+        .filter(|line| !line.is_empty()) // Excludes empty lines
+        .collect();
 
     // Prompt the user to select an option using fuzzy search
-    let selected_option = FuzzySelect::with_theme(&ColorfulTheme::default())
+    let selected_option = match FuzzySelect::with_theme(&ColorfulTheme::default())
         .items(&options)
         .default(0) // Set the default selection (optional)
-        .interact()
-        .unwrap();
+        .max_length(10)
+        .vim_mode(true)
+        .interact() {
+            Ok(selected) => selected,
+            Err(_e) => {
+                // fail silently if SIGINT received while making a selection
+                return Ok(()); // Exit the program or handle the error as needed
+            }
+    };
 
     // Print the selected option
     println!("{}", options[selected_option]);
+
     // Flush stdout
     io::stdout().flush().unwrap();
 
-    // You can now pass the selected option to the next part of your pipeline
+    // Goodbye!
+    Ok(())
+}
+
+fn args_handler() -> ArgMatches {
+    let matches = Command::new("Pick")
+        .version(env!("CARGO_PKG_VERSION"))
+        .author("Steve Arnett steven.arnett@protonmail.com")
+        .about("Pick allows you to pipe in any newline separated data and waits for you to make your selection before passing your decision to the next tool in your piped command chain.")
+        .get_matches();
+
+    return matches
 }
 
 fn read_input_from_stdin() -> String {
