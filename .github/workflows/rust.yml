@@ -39,6 +39,7 @@ jobs:
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
+          toolchain: stable # Specify the toolchain here, e.g., stable, nightly, or a specific version
           target: ${{ matrix.target }}
           override: true
       - name: Build
