@@ -31,6 +31,11 @@ jobs:
             target: x86_64-unknown-linux-gnu
 
     steps:
+      - name: Install Docker
+        if: runner.os == 'macOS'
+        run: |
+          brew install --cask docker
+          open /Applications/Docker.app
       - uses: actions/checkout@v4
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -42,11 +47,6 @@ jobs:
           toolchain: stable # Specify the toolchain here, e.g., stable, nightly, or a specific version
           target: ${{ matrix.target }}
           override: true
-      - name: Install Docker
-        if: runner.os == 'macOS'
-        run: |
-          brew install --cask docker
-          open /Applications/Docker.app
       - name: Build
         run: |
           cargo build --verbose --target ${{ matrix.target }}
