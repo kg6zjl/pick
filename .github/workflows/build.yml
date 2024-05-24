@@ -3,10 +3,6 @@ name: Build
 permissions:
   contents: write
 
-# on:
-#   push:
-#     tags:
-#       - v[0-9]+.*
 on:
   push:
     branches: [ "main" ]
@@ -14,22 +10,10 @@ on:
     branches: [ "main" ]
 
 env:
-    CARGO_TERM_COLOR: always
+  CARGO_TERM_COLOR: always
 
 jobs:
-  create-release:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-#      - uses: taiki-e/create-gh-release-action@v1
-#        with:
-#          # (optional) Path to changelog.
-#          changelog: CHANGELOG.md
-          # (required) GitHub token for creating GitHub Releases.
-#          token: ${{ secrets.GHACTION_TOKEN }}
-
-  upload-assets:
-    needs: create-release
+  build-assets:
     strategy:
       matrix:
         include:
@@ -60,7 +44,7 @@ jobs:
         if: matrix.rustup_target
       - name: Build with cargo
         run: cargo build --release --target ${{ matrix.target }}
-      - name: Upload artifacts
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.target }}
