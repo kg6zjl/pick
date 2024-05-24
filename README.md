@@ -41,6 +41,17 @@ Pick allows you to pipe in any newline separated data and waits for you to make 
 
 Enjoy!
 
+### Installation
+Adjust OS and ARCH for your operating system and architecture (options show on https://github.com/kg6zjl/pick/releases/latest)
+```
+OS="apple-darwin"
+ARCH="aarch64"
+LATEST_RELEASE=$(curl -L -s -H 'Accept: application/json' https://github.com/kg6zjl/pick/releases/latest | jq -r '.tag_name')
+curl -sL -o $HOME/bin/pick https://github.com/kg6zjl/pick/releases/download/${LATEST_RELEASE}/pick-${ARCH}-${OS}
+chmod +x $HOME/bin/pick
+pick --version
+```
+
 ### Developing
 Deps are `direnv` `asdf` and covered by the brew install command below. Once those are installed run `make setup` to bootstrap your local rust development environment.
 ```
