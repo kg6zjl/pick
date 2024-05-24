@@ -34,11 +34,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Download build artifacts
+      - name: List available artifacts
+        run: gh run list --workflow=build.yml --artifact
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHACTION_TOKEN }}
+      - name: Download all artifacts
         uses: actions/download-artifact@v4
-        with:
-          name: pick-${{ matrix.target }}
-      - name: Display structure of downloaded files
+      # - name: Download build artifacts
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: pick-${{ matrix.target }}
+      - name: Display structure of all downloaded files
         run: ls -R
       - name: Attach artifacts to release
         uses: actions/upload-release-asset@v1
