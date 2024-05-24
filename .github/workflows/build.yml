@@ -6,6 +6,8 @@ permissions:
 on:
   push:
     branches: [ "main" ]
+    tags:
+    - 'v*'
   pull_request:
     branches: [ "main" ]
 
@@ -34,19 +36,47 @@ jobs:
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
+
       - name: Install cross-compilation tools
         uses: taiki-e/setup-cross-toolchain-action@v1
         with:
           target: ${{ matrix.target }}
         if: startsWith(matrix.os, 'ubuntu')
+
       - name: Rustup Setup
         run: rustup target add ${{ matrix.rustup_target }}
         if: matrix.rustup_target
+
       - name: Build with cargo
         run: cargo build --release --target ${{ matrix.target }}
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: pick-${{ matrix.target }}
           path: target/${{ matrix.target }}/release/pick
           if-no-files-found: error
+
+      - name: Display structure of all files
+        run: ls -R; ls -lah
+
+      - name: Attach artifacts to release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GHACTION_TOKEN }}
+        with:
+          upload_url: ${{ needs.create-release.outputs.upload_url }}
+          asset_path: ./pick-${{ matrix.target }}
+          asset_name: pick-${{ matrix.target }}
+          asset_content_type: application/octet-stream
