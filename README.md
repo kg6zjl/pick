@@ -52,7 +52,7 @@ chmod +x $HOME/bin/pick
 pick --version
 ```
 
-### Developing
+### Development
 Deps are `direnv` `asdf` and covered by the brew install command below. Once those are installed run `make setup` to bootstrap your local rust development environment.
 ```
 brew install direnv asdf
