@@ -1,7 +1,7 @@
-name: Rust
+name: Build
 
-# permissions:
-#   contents: write
+permissions:
+  contents: write
 
 # on:
 #   push:
@@ -41,6 +41,7 @@ jobs:
             os: ubuntu-latest
           - target: x86_64-apple-darwin
             os: macos-latest
+
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -49,12 +50,10 @@ jobs:
         with:
           target: ${{ matrix.target }}
         if: startsWith(matrix.os, 'ubuntu')
-      # - uses: taiki-e/upload-rust-binary-action@v1
-      #   with:
-      #     # (required) Comma-separated list of binary names (non-extension portion of filename) to build and upload.
-      #     # Note that glob pattern is not supported yet.
-      #     bin: ...
-      #     # (optional) Target triple, default is host triple.
-      #     target: ${{ matrix.target }}
-      #     # (required) GitHub token for uploading assets to GitHub Releases.
-      #     token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build with cargo
+        run: cargo build --release --target ${{ matrix.target }}
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.target }}
+          path: target/${{ matrix.target }}/release/
