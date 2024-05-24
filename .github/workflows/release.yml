@@ -35,15 +35,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Download build artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
-          name: pick-${{ matrix.target }}
+          name: ${{ matrix.target }}
+      - name: Display structure of downloaded files
+        run: ls -R
       - name: Attach artifacts to release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GHACTION_TOKEN }}
         with:
           upload_url: ${{ needs.create-release.outputs.upload_url }}
-          asset_path: target/${{ matrix.target }}/release/pick-${{ matrix.target }}
+          asset_path: ./pick-${{ matrix.target }}
           asset_name: pick-${{ matrix.target }}
           asset_content_type: application/octet-stream
