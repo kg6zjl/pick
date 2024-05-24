@@ -72,12 +72,12 @@ jobs:
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref }}
-          name: Release ${{ github.ref }}
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
           draft: false
           prerelease: false
           token: ${{ secrets.GHACTION_TOKEN }}
-      
+
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
         with:
