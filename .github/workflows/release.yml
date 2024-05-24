@@ -37,7 +37,7 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v3
         with:
-          name: ${{ matrix.target }}
+          name: pick-${{ matrix.target }}
       - name: Attach artifacts to release
         uses: actions/upload-release-asset@v1
         env:
