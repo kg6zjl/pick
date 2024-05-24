@@ -37,7 +37,7 @@ jobs:
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
-          name: ${{ matrix.target }}
+          name: pick-${{ matrix.target }}
       - name: Display structure of downloaded files
         run: ls -R
       - name: Attach artifacts to release
