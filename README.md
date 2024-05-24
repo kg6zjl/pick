@@ -1,4 +1,4 @@
-[![Build](https://github.com/kg6zjl/pick/actions/workflows/build.yml/badge.svg)](https://github.com/kg6zjl/pick/actions/workflows/build.yml) [![Release](https://github.com/kg6zjl/pick/actions/workflows/release.yml/badge.svg)](https://github.com/kg6zjl/pick/actions/workflows/release.yml)
+[![Build](https://github.com/kg6zjl/pick/actions/workflows/build.yml/badge.svg)](https://github.com/kg6zjl/pick/actions/workflows/build.yml)
 
 # Introducing Pick
 
@@ -40,6 +40,18 @@ Your branch is up to date with 'origin/main'.
 Pick allows you to pipe in any newline separated data and waits for you to make your selection before passing your decision to the next tool in your piped command chain.
 
 Enjoy!
+
+### Developing
+Deps are `direnv` `asdf` and covered by the brew install command below. Once those are installed run `make setup` to bootstrap your local rust development environment.
+```
+brew install direnv asdf
+make setup
+cd ../ && cd - && direnv allow
+
+# verify that direnv sourced the correct rust install
+which rustc
+# should show $HOME/.asdf/installs/rust/x.x.x/bin/rustc
+```
 
 ### AI Warning
 This rust code was mostly AI generated thanks to Copilot

@@ -54,7 +54,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pick-${{ matrix.target }}
-          path: target/${{ matrix.target }}/release/pick
+          path: target/${{ matrix.target }}/release/pick-${{ matrix.target }}
 
   release:
     needs: build
@@ -67,13 +67,18 @@ jobs:
       
       - name: Display structure of all downloaded files
         run: ls -R; ls -lah
-      
-      - name: Create Release
+
+      - name: Get Version
+        id: get_version
+        run: |
+          echo ::set-output name=VERSION::$(awk -F= '/\[package\]/{flag=1;next}/\[/{flag=0}flag && /version/{print $2;exit}' Cargo.toml | tr -d ' "')
+
+      - name: Create Release with tag from Cargo.toml
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
+          tag_name: v${{ steps.get_version.outputs.VERSION }}
+          name: v${{ steps.get_version.outputs.VERSION }}
           draft: false
           prerelease: false
           token: ${{ secrets.GHACTION_TOKEN }}

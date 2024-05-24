@@ -8,10 +8,11 @@ deps:
 
 .PHONY: setup
 setup:
-	pip3 install ziglang
-	cargo install cargo-zigbuild
-	cargo install cross --git https://github.com/cross-rs/cross
-	rustup target add x86_64-apple-darwin || echo "Already added"
-	rustup target add aarch64-apple-darwin || echo "Already added"
-	rustup target add x86_64-unknown-linux-musl || echo "Already added"
-	rustup target add x86_64-unknown-linux-gnu || echo "Already added"
+	# use asdf's .tool-versions and asdf-plugin-manager to setup env
+	asdf plugin add asdf-plugin-manager https://github.com/asdf-community/asdf-plugin-manager.git
+	asdf plugin update asdf-plugin-manager v1.3.1
+	asdf install asdf-plugin-manager 1.3.1
+	asdf global asdf-plugin-manager 1.3.1
+
+	asdf install
+	cargo update
