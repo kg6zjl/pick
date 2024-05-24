@@ -70,7 +70,7 @@ jobs:
       - name: Get Version
         id: get_version
         run: |
-          echo "VERSION=$(awk -F= '/\[package\]/{flag=1;next}/\[/{flag=0}flag && /version/{print $2;exit}' Cargo.toml | tr -d ' ')" >> $GITHUB_ENV
+          echo "VERSION=$(awk -F= '/\[package\]/{flag=1;next}/\[/{flag=0}flag && /version/{print $2;exit}' Cargo.toml | tr -d ' \"')" >> $GITHUB_ENV
       
       - name: Create Release with tag from Cargo.toml
         id: create_release
@@ -89,7 +89,7 @@ jobs:
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.get_version.outputs.VERSION }}
+          tag_name: v${{ env.VERSION }}
           files: releases/pick-*
           token: ${{ secrets.GHACTION_TOKEN }}
           fail_on_unmatched_files: true
