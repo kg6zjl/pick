@@ -35,12 +35,17 @@ jobs:
         include:
           - target: aarch64-unknown-linux-gnu
             os: ubuntu-latest
+            arch: aarch64
           - target: aarch64-apple-darwin
             os: macos-latest
+            arch: aarch64
           - target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
+            arch: x86_64
           - target: x86_64-apple-darwin
             os: macos-latest
+            arch: x86_64
+            rustup_target: x86_64-apple-darwin
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -50,6 +55,9 @@ jobs:
         with:
           target: ${{ matrix.target }}
         if: startsWith(matrix.os, 'ubuntu')
+      - name: Rustup Setup
+        run: rustup target add ${{ matrix.rustup_target }}
+        if: matrix.rustup_target
       - name: Build with cargo
         run: cargo build --release --target ${{ matrix.target }}
       - name: Upload artifacts
