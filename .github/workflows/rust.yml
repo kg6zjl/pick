@@ -1,5 +1,12 @@
 name: Rust
 
+# permissions:
+#   contents: write
+
+# on:
+#   push:
+#     tags:
+#       - v[0-9]+.*
 on:
   push:
     branches: [ "main" ]
@@ -7,50 +14,47 @@ on:
     branches: [ "main" ]
 
 env:
-  CARGO_TERM_COLOR: always
+    CARGO_TERM_COLOR: always
 
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
+  create-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: taiki-e/create-gh-release-action@v1
+        with:
+          # (optional) Path to changelog.
+          changelog: CHANGELOG.md
+          # (required) GitHub token for creating GitHub Releases.
+          token: ${{ secrets.GHACTION_TOKEN }}
+
+  upload-assets:
+    needs: create-release
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest]
-        arch: [aarch64, x86_64]
         include:
-          - os: macos-latest
-            arch: aarch64
-            target: aarch64-apple-darwin
-          - os: macos-latest
-            arch: x86_64
-            target: x86_64-apple-darwin
-          - os: ubuntu-latest
-            arch: aarch64
-            target: aarch64-unknown-linux-gnu
-          - os: ubuntu-latest
-            arch: x86_64
-            target: x86_64-unknown-linux-gnu
-
+          - target: aarch64-unknown-linux-gnu
+            os: ubuntu-latest
+          - target: aarch64-apple-darwin
+            os: macos-latest
+          - target: x86_64-unknown-linux-gnu
+            os: ubuntu-latest
+          - target: x86_64-apple-darwin
+            os: macos-latest
+    runs-on: ${{ matrix.os }}
     steps:
-      - name: Setup docker (missing on MacOS)
-        if: runner.os == 'macOS'
-        run: |
-          brew install homebrew/cask/docker
-          colima start
       - uses: actions/checkout@v4
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Set up Rust
-        uses: actions-rs/toolchain@v1
+      - name: Install cross-compilation tools
+        uses: taiki-e/setup-cross-toolchain-action@v1
         with:
-          toolchain: stable # Specify the toolchain here, e.g., stable, nightly, or a specific version
           target: ${{ matrix.target }}
-          override: true
-      - name: Build
-        run: |
-          cargo build --verbose --target ${{ matrix.target }}
-          # If you need to package the build artifacts into a Docker image
-          # docker buildx build --platform linux/${{ matrix.arch }} -t myimage:${{ matrix.target }} .
-      - name: Run tests
-        run: cargo test --verbose --target ${{ matrix.target }}
+        if: startsWith(matrix.os, 'ubuntu')
+      # - uses: taiki-e/upload-rust-binary-action@v1
+      #   with:
+      #     # (required) Comma-separated list of binary names (non-extension portion of filename) to build and upload.
+      #     # Note that glob pattern is not supported yet.
+      #     bin: ...
+      #     # (optional) Target triple, default is host triple.
+      #     target: ${{ matrix.target }}
+      #     # (required) GitHub token for uploading assets to GitHub Releases.
+      #     token: ${{ secrets.GITHUB_TOKEN }}
