@@ -54,7 +54,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: pick-${{ matrix.target }}
-          path: target/${{ matrix.target }}/release/pick-${{ matrix.target }}
+          path: target/${{ matrix.target }}/release/pick
 
   release:
     needs: build
