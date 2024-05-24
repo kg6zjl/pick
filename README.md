@@ -1,3 +1,5 @@
+[![Build](https://github.com/kg6zjl/pick/actions/workflows/build.yml/badge.svg)](https://github.com/kg6zjl/pick/actions/workflows/build.yml) [![Release](https://github.com/kg6zjl/pick/actions/workflows/release.yml/badge.svg)](https://github.com/kg6zjl/pick/actions/workflows/release.yml)
+
 # Introducing Pick
 
 Pick fills a gap in my terminal that maybe you didn't even know you had.
