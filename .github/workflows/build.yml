@@ -67,20 +67,29 @@ jobs:
       
       - name: Display structure of all downloaded files
         run: ls -R; ls -lah
-      
-      - name: Create Release
+
+      - name: Get Version
+        id: get_version
+        run: |
+          echo ::set-output name=VERSION::$(awk -F= '/\[package\]/{flag=1;next}/\[/{flag=0}flag && /version/{print $2;exit}' Cargo.toml | tr -d ' "')
+
+      - name: Create Release with tag from Cargo.toml
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
-          name: Release ${{ github.ref_name }}
+          tag_name: v${{ steps.get_version.outputs.VERSION }}
+          name: v${{ steps.get_version.outputs.VERSION }}
           draft: false
           prerelease: false
           token: ${{ secrets.GHACTION_TOKEN }}
 
+      - name: Rename files to arch and os
+        run: |
+          rm -rf releases/; mkdir releases/; for f in $(ls -1 -d pick-*); do mv $f/pick releases/$f; done
+
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
         with:
-          files: pick-*
+          files: releases/pick-*
           token: ${{ secrets.GHACTION_TOKEN }}
           fail_on_unmatched_files: true
