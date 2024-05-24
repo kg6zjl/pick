@@ -11,7 +11,7 @@ use std::thread;
 
 fn main() -> Result<(), std::io::Error> {
     // Call the args handler
-    let _args = args_handler();
+    let matches = args_handler();
 
     // Set up the signal handler
     let mut signals = Signals::new(&[SIGINT]).unwrap();
@@ -32,12 +32,23 @@ fn main() -> Result<(), std::io::Error> {
     // Read input from stdin (piped input)
     let input_text = read_input_from_stdin();
 
+    // Default to newline unless delimiter arg is passed
+    let binding = "\n".to_string();
+    let delimiter = matches.get_one::<String>("delimiter").unwrap_or(&binding);
+
     // Parse the input into a list of options, excluding empty lines
     let options: Vec<String> = input_text
-        .lines()
+        .split(delimiter)
         .map(|line| line.trim().to_string()) // Trims whitespace from each line
         .filter(|line| !line.is_empty()) // Excludes empty lines
         .collect();
+    
+    // // Parse the input into a list of options, excluding empty lines
+    // let options: Vec<String> = input_text
+    //     .lines()
+    //     .map(|line| line.trim().to_string()) // Trims whitespace from each line
+    //     .filter(|line| !line.is_empty()) // Excludes empty lines
+    //     .collect();
 
     // Prompt the user to select an option using fuzzy search
     let selected_option = match FuzzySelect::with_theme(&ColorfulTheme::default())
@@ -68,6 +79,12 @@ fn args_handler() -> ArgMatches {
         .version(env!("CARGO_PKG_VERSION"))
         .author("Steve Arnett steven.arnett@protonmail.com")
         .about("Pick allows you to pipe in any newline separated data and waits for you to make your selection before passing your decision to the next tool in your piped command chain.")
+        .arg(Arg::new("delimiter")
+            .long("delimiter")
+            .short('d')
+            .help("Specify the delimiter (default is newline)")
+            .value_name("DELIMITER")
+        )
         .get_matches();
 
     return matches

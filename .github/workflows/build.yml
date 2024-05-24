@@ -70,14 +70,14 @@ jobs:
       - name: Get Version
         id: get_version
         run: |
-          echo ::set-output name=VERSION::$(awk -F= '/\[package\]/{flag=1;next}/\[/{flag=0}flag && /version/{print $2;exit}' Cargo.toml | tr -d ' "')
-
+          echo "VERSION=$(awk -F= '/\[package\]/{flag=1;next}/\[/{flag=0}flag && /version/{print $2;exit}' Cargo.toml | tr -d ' ')" >> $GITHUB_ENV
+      
       - name: Create Release with tag from Cargo.toml
         id: create_release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ steps.get_version.outputs.VERSION }}
-          name: v${{ steps.get_version.outputs.VERSION }}
+          tag_name: v${{ env.VERSION }}
+          name: v${{ env.VERSION }}
           draft: false
           prerelease: false
           token: ${{ secrets.GHACTION_TOKEN }}
