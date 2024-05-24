@@ -19,7 +19,6 @@ jobs:
       - name: Create GitHub Release
         uses: taiki-e/create-gh-release-action@v1
         with:
-          changelog: CHANGELOG.md
           token: ${{ secrets.GHACTION_TOKEN }}
 
   attach-assets:
