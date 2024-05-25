@@ -8,6 +8,12 @@ use std::env;
 use std::thread;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
+    // Check if any arguments are provided or if stdin is a tty (i.e., there's no piped data)
+    if env::args().len() == 1 && atty::is(atty::Stream::Stdin) {
+        println!("Please provide arguments or piped data. Exiting.");
+        std::process::exit(0);
+    }
+
     // Set up the signal handler
     let mut signals = Signals::new(&[SIGINT]).unwrap();
     thread::spawn(move || {
