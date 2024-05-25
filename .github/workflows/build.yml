@@ -40,9 +40,6 @@ jobs:
         with:
           target: ${{ matrix.target }}
         if: startsWith(matrix.os, 'ubuntu')
-      
-      - name: Set up Expect for testing
-        run: apt-get install -y expect
 
       - name: Rustup Setup
         run: rustup target add ${{ matrix.rustup_target }}
