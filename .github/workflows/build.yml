@@ -45,6 +45,9 @@ jobs:
         run: rustup target add ${{ matrix.rustup_target }}
         if: matrix.rustup_target
 
+      - name: Run tests
+        run: cargo test
+        
       - name: Build with cargo
         run: cargo build --release --target ${{ matrix.target }}
 

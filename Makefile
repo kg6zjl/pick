@@ -7,6 +7,10 @@ build:
 deps:
 	cargo update
 
+.PHONY: test
+test:
+	cargo test
+
 .PHONY: setup
 setup:
 	# use asdf's .tool-versions and asdf-plugin-manager to setup env
