@@ -87,7 +87,13 @@ jobs:
 
       - name: Rename files to arch and os
         run: |
-          rm -rf releases/; mkdir releases/; for f in $(ls -1 -d pick-*); do mv $f/pick releases/$f; done; ls -lah releases/
+          rm -rf releases/; \
+          mkdir -p releases/; \
+          for f in $(ls -1 -d pick-*); do \
+            mv ${f}/pick releases/${f}; \
+            shasum -a 256 releases/${f} releases/${f}.sha
+          done; \
+          ls -lah releases/
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2
