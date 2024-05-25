@@ -50,3 +50,11 @@ expect "Please provide arguments or piped data. Exiting."
 
 # Expect the end
 expect eof
+
+############ TEST 5 ############
+# tests for empty piped data and no args
+# Spawn the pick command with some options and a custom delimiter
+spawn bash -c "$cmd -d ','"
+
+# expect output to say Pick x.x.x
+expect "No input received. Exiting."

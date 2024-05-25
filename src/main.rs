@@ -1,3 +1,4 @@
+extern crate libc;
 use dialoguer::{theme::ColorfulTheme, FuzzySelect};
 use clap::{Arg, ArgMatches, Command};
 use std::io::{self, BufRead, Write};
@@ -6,12 +7,13 @@ use signal_hook::iterator::Signals;
 use libc::{signal, SIGINT, SIGPIPE, SIG_IGN};
 use std::env;
 use std::thread;
+use std::process;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Check if any arguments are provided or if stdin is a tty (i.e., there's no piped data)
-    if env::args().len() == 1 && atty::is(atty::Stream::Stdin) {
+    if env::args().len() == 1 && unsafe { libc::isatty(libc::STDIN_FILENO) } != 0 {
         println!("Please provide arguments or piped data. Exiting.");
-        std::process::exit(0);
+        process::exit(0);
     }
 
     // Set up the signal handler
@@ -104,6 +106,12 @@ fn args_handler() -> ArgMatches {
 }
 
 fn read_input_from_stdin() -> String {
+    // Check if stdin is a tty (i.e., there's no piped data)
+    if unsafe { libc::isatty(libc::STDIN_FILENO) } != 0 {
+        println!("Please provide piped data. Exiting.");
+        process::exit(0);
+    }
+
     let mut input_text = String::new();
     let stdin = io::stdin();
     let mut handle = stdin.lock(); // Lock stdin to read line by line
@@ -114,6 +122,7 @@ fn read_input_from_stdin() -> String {
     }
     input_text
 }
+
 
 #[cfg(test)]
 mod tests {
