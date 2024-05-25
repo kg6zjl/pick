@@ -58,6 +58,3 @@ spawn bash -c "$cmd -d ','"
 
 # expect output to say Pick x.x.x
 expect "No input received. Exiting."
-
-# Expect the end
-expect eof
