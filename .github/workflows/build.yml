@@ -102,7 +102,7 @@ jobs:
           mkdir -p releases/; \
           for f in $(ls -1 -d pick-*); do \
             mv ${f}/pick releases/${f}; \
-            shasum -a 256 releases/${f} releases/${f}.sha
+            shasum -a 256 releases/${f} > releases/${f}.sha
           done; \
           ls -lah releases/
 
