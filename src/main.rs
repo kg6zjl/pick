@@ -109,11 +109,16 @@ fn read_input_from_stdin() -> String {
     let mut handle = stdin.lock(); // Lock stdin to read line by line
     while let Ok(line) = handle.read_line(&mut input_text) {
         if line == 0 {
+            if input_text.is_empty() {
+                println!("No input received. Exiting.");
+                std::process::exit(0);
+            }
             break; // End of input
         }
     }
     input_text
 }
+
 
 #[cfg(test)]
 mod tests {
