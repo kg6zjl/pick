@@ -1,0 +1,26 @@
+version: '3'
+
+tasks:
+  build:
+    cmds:
+      - cargo build --release
+      - cp target/release/pick ~/bin/
+
+  deps:
+    cmds:
+      - cargo update
+
+  test:
+    deps: [build]
+    cmds:
+      - cargo test
+      - ./tests/integration_test.sh pick
+
+  setup:
+    cmds:
+      - asdf plugin add asdf-plugin-manager https://github.com/asdf-community/asdf-plugin-manager.git
+      - asdf plugin update asdf-plugin-manager v1.3.1
+      - asdf install asdf-plugin-manager 1.3.1
+      - asdf global asdf-plugin-manager 1.3.1
+      - asdf install
+      - cargo update

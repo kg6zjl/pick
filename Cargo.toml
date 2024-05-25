@@ -1,6 +1,6 @@
 [package]
 name = "pick"
-version = "0.4.1"
+version = "0.4.2"
 edition = "2021"
 
 [profile.release]
@@ -11,6 +11,7 @@ panic = "abort"
 incremental = false
 
 [dependencies]
+atty = "0.2.14"
 clap = "4.5.4"
 libc = "0.2"
 signal-hook = "0.3.17"

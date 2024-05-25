@@ -62,16 +62,18 @@ pick --version
 ```
 
 ### Development
-Deps are `direnv` `asdf` and covered by the brew install command below. Once those are installed run `make setup` to bootstrap your local rust development environment.
+Deps are `direnv` `asdf` and covered by the brew install command below. Once those are installed run `task setup` to bootstrap your local rust development environment.
 ```
-brew install direnv asdf
-make setup
+brew install direnv asdf go-task
+task setup
 cd ../ && cd - && direnv allow
 
 # verify that direnv sourced the correct rust install
 which rustc
 # should show $HOME/.asdf/installs/rust/x.x.x/bin/rustc
 ```
+
+Before making a Pull Request, please run `task test` which will run build, tests, and integration tests.
 
 ### AI Warning
 This rust code was mostly AI generated thanks to Copilot
