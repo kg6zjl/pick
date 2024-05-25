@@ -40,6 +40,9 @@ jobs:
         with:
           target: ${{ matrix.target }}
         if: startsWith(matrix.os, 'ubuntu')
+      
+      - name: Set up Expect for testing
+        run: apt-get install -y expect
 
       - name: Rustup Setup
         run: rustup target add ${{ matrix.rustup_target }}
@@ -50,6 +53,9 @@ jobs:
         
       - name: Build with cargo
         run: cargo build --release --target ${{ matrix.target }}
+      
+      - name: Run Integration Tests
+        run: ./tests/integration_test.sh target/${{ matrix.target }}/release/pick
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
