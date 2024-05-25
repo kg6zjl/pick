@@ -1,10 +1,23 @@
 [![Build](https://github.com/kg6zjl/pick/actions/workflows/build.yml/badge.svg)](https://github.com/kg6zjl/pick/actions/workflows/build.yml)
 
+<p align="center">
+  <img src="images/pick.jpg?raw=true" alt="Rust-y Pick" width="40%">
+</p>
+
+
 # Introducing Pick
 
 Pick fills a gap in my terminal that maybe you didn't even know you had.
 
-Have you ever wished you could do something as simple as pick a hostname from a list?
+Pick allows you to pipe in any newline or delimiter separated data and waits for you to make your selection before passing your decision to the next tool in your piped command chain. It's a universal interactive fuzzy match choice picker for your bash script or your terminal.
+
+Seeing as how others have developed similar concepts with the same name, we'll call this one the "Rust-y Pick".
+
+Enjoy!
+
+### Examples
+
+Have you ever wished you could do something as simple as fuzzy match pick a hostname from a list?
 ```
 $ ssh `cat hosts.txt | pick`
 ›
@@ -36,10 +49,6 @@ Your branch is up to date with 'origin/main'.
 ```
 ![Pick](images/pick3.png?raw=true "Pick")
 
-
-Pick allows you to pipe in any newline separated data and waits for you to make your selection before passing your decision to the next tool in your piped command chain.
-
-Enjoy!
 
 ### Installation
 Adjust OS and ARCH for your operating system and architecture (options show on https://github.com/kg6zjl/pick/releases/latest)
