@@ -1,26 +1,19 @@
 use dialoguer::{theme::ColorfulTheme, FuzzySelect};
 use clap::{Arg, ArgMatches, Command};
 use std::io::{self, BufRead, Write};
+use std::fmt;
 use signal_hook::iterator::Signals;
-use libc::signal;
-use libc::SIGINT;
-use libc::SIGPIPE;
-use libc::SIG_IGN;
+use libc::{signal, SIGINT, SIGPIPE, SIG_IGN};
 use std::env;
 use std::thread;
 
-fn main() -> Result<(), std::io::Error> {
-    // Call the args handler
-    let matches = args_handler();
-
+fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Set up the signal handler
     let mut signals = Signals::new(&[SIGINT]).unwrap();
     thread::spawn(move || {
-        for sig in signals.forever() {
-            if sig == SIGINT {
-                // Clean exit code
-                std::process::exit(0);
-            }
+        for _sig in signals.forever() {
+            // Clean exit code
+            std::process::exit(0);
         }
     });
 
@@ -29,6 +22,9 @@ fn main() -> Result<(), std::io::Error> {
         signal(SIGPIPE, SIG_IGN);
     }
 
+    // Call the args handler
+    let matches = args_handler();
+
     // Read input from stdin (piped input)
     let input_text = read_input_from_stdin();
 
@@ -36,20 +32,38 @@ fn main() -> Result<(), std::io::Error> {
     let binding = "\n".to_string();
     let delimiter = matches.get_one::<String>("delimiter").unwrap_or(&binding);
 
+    // Sanitize inputs
+    let options = sanitize_input(&input_text, delimiter)?;
+
+    // Prompt and get the selection from the user
+    let selection = selection_handler(&options)?;
+
+    // Call the output handler with choice
+    output_handler(&options[selection].to_string());
+
+    // Flush stdout
+    io::stdout().flush().unwrap();
+
+    // Goodbye!
+    Ok(())
+}
+
+fn output_handler(line: &str) {
+    print!("{}", line);
+}
+
+fn sanitize_input(input_text: &str, delimiter: &str) -> Result<Vec<String>, fmt::Error> {
     // Parse the input into a list of options, excluding empty lines
     let options: Vec<String> = input_text
         .split(delimiter)
         .map(|line| line.trim().to_string()) // Trims whitespace from each line
         .filter(|line| !line.is_empty()) // Excludes empty lines
         .collect();
-    
-    // // Parse the input into a list of options, excluding empty lines
-    // let options: Vec<String> = input_text
-    //     .lines()
-    //     .map(|line| line.trim().to_string()) // Trims whitespace from each line
-    //     .filter(|line| !line.is_empty()) // Excludes empty lines
-    //     .collect();
 
+    Ok(options)
+}
+
+fn selection_handler(options: &[String]) -> Result<usize, Box<dyn std::error::Error>> {
     // Prompt the user to select an option using fuzzy search
     let selected_option = match FuzzySelect::with_theme(&ColorfulTheme::default())
         .items(&options)
@@ -60,25 +74,18 @@ fn main() -> Result<(), std::io::Error> {
             Ok(selected) => selected,
             Err(_e) => {
                 // fail silently if SIGINT received while making a selection
-                return Ok(()); // Exit the program or handle the error as needed
+                return Err(Box::new(std::fmt::Error)); // Exit the program or handle the error as needed
             }
     };
 
-    // Print the selected option
-    println!("{}", options[selected_option]);
-
-    // Flush stdout
-    io::stdout().flush().unwrap();
-
-    // Goodbye!
-    Ok(())
+    Ok(selected_option)
 }
 
 fn args_handler() -> ArgMatches {
     let matches = Command::new("Pick")
         .version(env!("CARGO_PKG_VERSION"))
-        .author("Steve Arnett steven.arnett@protonmail.com")
-        .about("Pick allows you to pipe in any newline separated data and waits for you to make your selection before passing your decision to the next tool in your piped command chain.")
+        .author("Steve Arnett - www.github.com/kg6zjl")
+        .about("Pick allows you to pipe in any newline or delimiter separated data and waits for you to make your selection before passing your decision to the next tool in your piped command chain.")
         .arg(Arg::new("delimiter")
             .long("delimiter")
             .short('d')
@@ -87,7 +94,7 @@ fn args_handler() -> ArgMatches {
         )
         .get_matches();
 
-    return matches
+    matches
 }
 
 fn read_input_from_stdin() -> String {
@@ -100,4 +107,26 @@ fn read_input_from_stdin() -> String {
         }
     }
     input_text
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_sanitize_input_default() {
+        let input_text = "apple\nbanana\n\npear\n";
+        let delimiter = "\n";
+        let result = sanitize_input(input_text, delimiter).unwrap();
+        assert_eq!(result, vec!["apple", "banana", "pear"]);
+    }
+
+    #[test]
+    fn test_sanitize_input_custom() {
+        let input_text = "apple,banana,pear\n";
+        let delimiter = ",";
+        let result = sanitize_input(input_text, delimiter).unwrap();
+        assert_eq!(result, vec!["apple", "banana", "pear"]);
+    }
+
 }
