@@ -64,8 +64,8 @@ pick --version
 ### Development
 Deps are `direnv` `asdf` and covered by the brew install command below. Once those are installed run `make setup` to bootstrap your local rust development environment.
 ```
-brew install direnv asdf
-make setup
+brew install direnv asdf go-task
+task setup
 cd ../ && cd - && direnv allow
 
 # verify that direnv sourced the correct rust install
