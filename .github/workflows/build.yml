@@ -41,6 +41,14 @@ jobs:
           target: ${{ matrix.target }}
         if: startsWith(matrix.os, 'ubuntu')
 
+      - name: Install expect on Ubuntu
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y expect
+      
+      - name: Install expect on MacOS
+        if: runner.os == 'macOS'
+        run: brew install expect
+
       - name: Rustup Setup
         run: rustup target add ${{ matrix.rustup_target }}
         if: matrix.rustup_target
@@ -50,6 +58,9 @@ jobs:
         
       - name: Build with cargo
         run: cargo build --release --target ${{ matrix.target }}
+      
+      - name: Run Integration Tests
+        run: ./tests/integration_test.sh target/${{ matrix.target }}/release/pick
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
@@ -87,7 +98,13 @@ jobs:
 
       - name: Rename files to arch and os
         run: |
-          rm -rf releases/; mkdir releases/; for f in $(ls -1 -d pick-*); do mv $f/pick releases/$f; done; ls -lah releases/
+          rm -rf releases/; \
+          mkdir -p releases/; \
+          for f in $(ls -1 -d pick-*); do \
+            mv ${f}/pick releases/${f}; \
+            shasum -a 256 releases/${f} releases/${f}.sha
+          done; \
+          ls -lah releases/
 
       - name: Upload Release Asset
         uses: softprops/action-gh-release@v2

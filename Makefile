@@ -8,8 +8,9 @@ deps:
 	cargo update
 
 .PHONY: test
-test:
+test: build
 	cargo test
+	./tests/integration_test.sh pick
 
 .PHONY: setup
 setup:
