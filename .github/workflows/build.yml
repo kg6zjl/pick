@@ -41,8 +41,13 @@ jobs:
           target: ${{ matrix.target }}
         if: startsWith(matrix.os, 'ubuntu')
 
-      - name: Install Expect for tests
-        run: apt install -y expect
+      - name: Install expect on Ubuntu
+        if: runner.os == 'Linux'
+        run: sudo apt-get install -y expect
+      
+      - name: Install expect on MacOS
+        if: runner.os == 'macOS'
+        run: brew install expect
 
       - name: Rustup Setup
         run: rustup target add ${{ matrix.rustup_target }}
