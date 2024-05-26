@@ -22,10 +22,6 @@ jobs:
       - name: Generate Rust documentation
         run: |
           cargo doc --no-deps
-          mkdir -p target/doc/
-          mkdir -p docs/
-          touch docs/index.html
-          echo "<meta http-equiv=\"refresh\" content=\"0; url=build_wheel\">" > docs/index.html
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
