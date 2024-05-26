@@ -1,7 +1,3 @@
-show the giuthub action steps for a rust app to generate a docs webpage wirth MkDocs and then push it to a /docs dir with pages enabled. add my logo from the README.md to the cargo docs also. use mkdocs please.
-
-target/doc/index.html does not exist.
-
 name: Generate Rust Docs and Deploy to GitHub Pages
 
 on:
