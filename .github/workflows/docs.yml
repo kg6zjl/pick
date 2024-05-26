@@ -1,0 +1,39 @@
+name: Generate Rust Docs and Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Trigger the workflow on push events on the main branch
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Generate Rust documentation
+        run: |
+          cargo doc --no-deps
+          mkdir -p target/doc/
+          touch target/doc/index.html
+          echo "<meta http-equiv=\"refresh\" content=\"0; url=build_wheel\">" > target/doc/index.html
+
+      - name: Add logo to docs
+        run: |
+          LOGO_URL=$(grep -oP '(?<=!\[.*\]\().*(?=\))' README.md)  # Extract logo URL from README.md
+          echo "<img src=\"$LOGO_URL\" alt=\"Logo\">" >> target/doc/index.html  # Add logo to index.html
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GHACTION_TOKEN }}
+          publish_dir: ./docs
+

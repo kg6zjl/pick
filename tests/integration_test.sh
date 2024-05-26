@@ -5,7 +5,7 @@ set cmd [lindex $argv 0]
 
 ############ TEST 1 ############
 # tests default delimiter/default behavior
-# Spawn the pick command with some options
+# Spawn the pick command with default options
 spawn bash -c "echo 'option 1\noption 2\noption 3' | $cmd"
 
 # Send the selection (e.g., the first option)
@@ -31,7 +31,7 @@ expect eof
 
 ############ TEST 3 ############
 # test the version output
-# Spawn the pick command with some options and a custom delimiter
+# Spawn the pick command with --version flag
 spawn bash -c "$cmd -V"
 
 # expect output to say Pick x.x.x
@@ -42,7 +42,7 @@ expect eof
 
 ############ TEST 4 ############
 # tests for empty piped data and no args
-# Spawn the pick command with some options and a custom delimiter
+# Spawn the pick command with no options
 spawn bash -c "$cmd"
 
 # expect output to say Pick x.x.x
