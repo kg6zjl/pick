@@ -1,4 +1,4 @@
-name: Build
+name: Build & Release
 
 permissions:
   contents: write
@@ -52,6 +52,9 @@ jobs:
       - name: Rustup Setup
         run: rustup target add ${{ matrix.rustup_target }}
         if: matrix.rustup_target
+
+      - name: Run clippy
+        run: cargo clippy
 
       - name: Run tests
         run: cargo test

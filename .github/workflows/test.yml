@@ -1,0 +1,37 @@
+name: Test
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install expect on Ubuntu
+        run: sudo apt-get install -y expect
+
+      - name: Run clippy
+        run: cargo clippy
+        id: clippy
+
+      - name: Run tests
+        run: cargo test
+        id: tests
+        if: steps.clippy.outcome == 'success'
+
+      - name: Build with cargo
+        run: cargo build --release
+        id: build
+        if: steps.tests.outcome == 'success'
+      
+      - name: Run Integration Tests
+        run: ./tests/integration_test.sh target/release/pick
+        if: steps.build.outcome == 'success'
