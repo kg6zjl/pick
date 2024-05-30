@@ -69,7 +69,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // Goodbye!
-    Ok(())
+    std::process::exit(0)
 }
 
 fn output_handler(line: &str) {
