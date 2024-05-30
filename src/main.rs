@@ -26,12 +26,14 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Spawn a new thread to handle signals
     thread::spawn(move || {
-        if let Some(_sig) = signals.forever().next() {
+        for _sig in signals.forever() {
             println!("Signal received, terminating...");
             signals_handle.close();
-            tx.send(()).unwrap(); // Send a message to the main thread// Exit the thread after handling the signal
+            let _ = tx.send(());
+            break; // Exit the thread after handling the signal
         }
     });
+
     // Allow unsafe because we close the pipe
     unsafe {
         signal(SIGPIPE, SIG_IGN);
@@ -59,13 +61,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Flush stdout
     io::stdout().flush().unwrap();
 
-    // Non-blocking check for signal handling
-    match rx.try_recv() {
-        Ok(_) | Err(mpsc::TryRecvError::Disconnected) => {
+    // Blocking check for signal handling
+    match rx.recv() {
+        Ok(_) | Err(mpsc::RecvError) => {
             println!("Signal handling thread has finished");
-        }
-        Err(mpsc::TryRecvError::Empty) => {
-            // No signals received, continue with the application
         }
     }
 
