@@ -17,7 +17,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // Set up the signal handler
-    let mut signals = Signals::new(&[SIGINT])?;
+    let mut signals = Signals::new([SIGINT])?;
     let signals_handle = signals.handle();
     thread::spawn(move || {
         for _sig in signals.forever() {
