@@ -17,7 +17,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // Set up the signal handler
-    let mut signals = Signals::new(&[SIGINT]).unwrap();
+    let mut signals = Signals::new([SIGINT]).unwrap();
     thread::spawn(move || {
         for _sig in signals.forever() {
             // Clean exit code
@@ -74,7 +74,7 @@ fn sanitize_input(input_text: &str, delimiter: &str) -> Result<Vec<String>, fmt:
 fn selection_handler(options: &[String]) -> Result<usize, Box<dyn std::error::Error>> {
     // Prompt the user to select an option using fuzzy search
     let selected_option = match FuzzySelect::with_theme(&ColorfulTheme::default())
-        .items(&options)
+        .items(options)
         .default(0) // Set the default selection (optional)
         .max_length(10)
         .vim_mode(true)
@@ -90,7 +90,9 @@ fn selection_handler(options: &[String]) -> Result<usize, Box<dyn std::error::Er
 }
 
 fn args_handler() -> ArgMatches {
-    let matches = Command::new("Pick")
+    
+
+    Command::new("Pick")
         .version(env!("CARGO_PKG_VERSION"))
         .author("Steve Arnett - www.github.com/kg6zjl")
         .about("Pick allows you to pipe in any newline or delimiter separated data and waits for you to make your selection before passing your decision to the next tool in your piped command chain.")
@@ -100,9 +102,7 @@ fn args_handler() -> ArgMatches {
             .help("Specify the delimiter (default is newline)")
             .value_name("DELIMITER")
         )
-        .get_matches();
-
-    matches
+        .get_matches()
 }
 
 fn read_input_from_stdin() -> String {
