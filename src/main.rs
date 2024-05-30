@@ -7,6 +7,8 @@ use signal_hook::iterator::Signals;
 use libc::{signal, SIGINT, SIGPIPE, SIG_IGN};
 use std::env;
 use std::process;
+use std::sync::mpsc;
+use std::thread;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Check if any arguments are provided or if stdin is a tty (i.e., there's no piped data)
@@ -19,12 +21,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut signals = Signals::new([SIGINT])?;
     let signals_handle = signals.handle();
     
-    // Handle only the first signal
-    if let Some(_sig) = signals.forever().next() {
-        println!("Signal received, terminating...");
-        signals_handle.close();
-    }
+    // Create a channel to communicate with the signal handling thread
+    let (tx, rx) = mpsc::channel();
 
+    // Spawn a new thread to handle signals
+    thread::spawn(move || {
+        for _sig in signals.forever() {
+            println!("Signal received, terminating...");
+            signals_handle.close();
+            tx.send(()).unwrap(); // Send a message to the main thread
+            return; // Exit the thread after handling the signal
+        }
+    });
     // Allow unsafe because we close the pipe
     unsafe {
         signal(SIGPIPE, SIG_IGN);
@@ -51,6 +59,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Flush stdout
     io::stdout().flush().unwrap();
+
+    // Non-blocking check for signal handling
+    match rx.try_recv() {
+        Ok(_) | Err(mpsc::TryRecvError::Disconnected) => {
+            println!("Signal handling thread has finished");
+        }
+        Err(mpsc::TryRecvError::Empty) => {
+            // No signals received, continue with the application
+        }
+    }
 
     // Goodbye!
     Ok(())
