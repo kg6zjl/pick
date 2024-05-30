@@ -19,13 +19,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Set up the signal handler
     let mut signals = Signals::new([SIGINT])?;
     let signals_handle = signals.handle();
-    thread::spawn(move || {
-        for _sig in signals.forever() {
-            println!("Signal received, terminating...");
-            signals_handle.close();
-            break;
-        }
-    });
+    
+    // Handle only the first signal
+    if let Some(_sig) = signals.forever().next() {
+        println!("Signal received, terminating...");
+        signals_handle.close();
+    }
 
     // Allow unsafe because we close the pipe
     unsafe {
