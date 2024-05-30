@@ -29,8 +29,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         if let Some(_sig) = signals.forever().next() {
             println!("Signal received, terminating...");
             signals_handle.close();
-            tx.send(()).unwrap(); // Send a message to the main thread
-            return; // Exit the thread after handling the signal
+            tx.send(()).unwrap(); // Send a message to the main thread// Exit the thread after handling the signal
         }
     });
     // Allow unsafe because we close the pipe
