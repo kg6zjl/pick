@@ -17,11 +17,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // Set up the signal handler
-    let mut signals = Signals::new([SIGINT]).unwrap();
+    let mut signals = Signals::new(&[SIGINT])?;
+    let signals_handle = signals.handle();
     thread::spawn(move || {
         for _sig in signals.forever() {
-            // Clean exit code
-            std::process::exit(0);
+            println!("Signal received, terminating...");
+            signals_handle.close();
+            break;
         }
     });
 
