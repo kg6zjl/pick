@@ -6,7 +6,6 @@ use std::fmt;
 use signal_hook::iterator::Signals;
 use libc::{signal, SIGINT, SIGPIPE, SIG_IGN};
 use std::env;
-use std::thread;
 use std::process;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
