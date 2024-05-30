@@ -7,7 +7,6 @@ use signal_hook::iterator::Signals;
 use libc::{signal, SIGINT, SIGPIPE, SIG_IGN};
 use std::env;
 use std::process;
-use std::sync::mpsc;
 use std::thread;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -18,18 +17,13 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     // Set up the signal handler
-    let mut signals = Signals::new([SIGINT])?;
+    let mut signals = Signals::new(&[SIGINT])?;
     let signals_handle = signals.handle();
-    
-    // Create a channel to communicate with the signal handling thread
-    let (tx, _rx) = mpsc::channel();
-
-    // Spawn a new thread to handle signals
-    thread::spawn(move || {
+    let _ = thread::spawn(move || {
         for _sig in signals.forever() {
             signals_handle.close();
-            let _ = tx.send(());
-            break; // Exit the thread after handling the signal
+            // Exit the program immediately when SIGINT is received
+            std::process::exit(0);
         }
     });
 
@@ -62,13 +56,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     // Goodbye!
     std::process::exit(0);
-
-    // // Blocking check for signal handling
-    // match rx.recv() {
-    //     Ok(_) | Err(mpsc::RecvError) => {
-    //         println!("Signal handling thread has finished");
-    //     }
-    // }
 }
 
 fn output_handler(line: &str) {
