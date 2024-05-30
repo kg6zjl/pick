@@ -22,7 +22,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let signals_handle = signals.handle();
     
     // Create a channel to communicate with the signal handling thread
-    let (tx, rx) = mpsc::channel();
+    let (tx, _rx) = mpsc::channel();
 
     // Spawn a new thread to handle signals
     thread::spawn(move || {
@@ -61,15 +61,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Flush stdout
     io::stdout().flush().unwrap();
 
-    // Blocking check for signal handling
-    match rx.recv() {
-        Ok(_) | Err(mpsc::RecvError) => {
-            println!("Signal handling thread has finished");
-        }
-    }
-
     // Goodbye!
-    std::process::exit(0)
+    std::process::exit(0);
+
+    // // Blocking check for signal handling
+    // match rx.recv() {
+    //     Ok(_) | Err(mpsc::RecvError) => {
+    //         println!("Signal handling thread has finished");
+    //     }
+    // }
 }
 
 fn output_handler(line: &str) {
