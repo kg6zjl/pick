@@ -27,7 +27,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Spawn a new thread to handle signals
     thread::spawn(move || {
         for _sig in signals.forever() {
-            println!("Signal received, terminating...");
             signals_handle.close();
             let _ = tx.send(());
             break; // Exit the thread after handling the signal
