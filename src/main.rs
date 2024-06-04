@@ -20,6 +20,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut signals = Signals::new([SIGINT])?;
     let signals_handle = signals.handle();
     let _ = thread::spawn(move || {
+        #[allow(clippy::never_loop)]
         for _sig in signals.forever() {
             signals_handle.close();
             // Exit the program immediately when SIGINT is received
