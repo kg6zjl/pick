@@ -3,6 +3,11 @@ version: '3'
 tasks:
   build:
     cmds:
+      - cargo build --release
+      - cp target/release/pick ~/bin/
+
+  mr:
+    cmds:
       - cargo clippy --fix
       - cargo build --release
       - cp target/release/pick ~/bin/
