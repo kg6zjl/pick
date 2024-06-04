@@ -3,6 +3,7 @@ version: '3'
 tasks:
   build:
     cmds:
+      - cargo clippy --fix
       - cargo build --release
       - cp target/release/pick ~/bin/
 
@@ -13,6 +14,7 @@ tasks:
   test:
     deps: [build]
     cmds:
+      - cargo clippy --fix
       - cargo test
       - ./tests/integration_test.sh pick
 
