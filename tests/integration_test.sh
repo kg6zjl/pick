@@ -58,3 +58,16 @@ spawn bash -c "$cmd -d ','"
 
 # expect output to say Pick x.x.x
 expect "No input received. Exiting."
+
+
+############ TEST 6 ############
+# tests for column use case
+spawn bash -c "echo ' M tests/integration_test.sh\n?? foo' | $cmd -c 2"
+
+# Send the selection (e.g., the first option)
+send -- "\r"
+
+expect "tests/integration_test.sh"
+
+# Expect the end
+expect eof

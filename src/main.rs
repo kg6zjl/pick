@@ -37,11 +37,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let matches = args_handler();
 
     // Read input from stdin (piped input)
-    let input_text = read_input_from_stdin();
+    let mut input_text = read_input_from_stdin();
 
     // Default to newline unless delimiter arg is passed
     let binding = "\n".to_string();
     let delimiter = matches.get_one::<String>("delimiter").unwrap_or(&binding);
+
+    let column = matches.get_one::<String>("column");
+    if let Some(col_str) = column {
+        let col_num = col_str.parse::<usize>()?;
+        let col_index = if col_num > 0 { col_num - 1 } else { 0 };
+        let parsed_opts = column_parser(&input_text, col_index)?;
+        input_text = parsed_opts.join("\n");
+    }
 
     // Sanitize inputs
     let options = sanitize_input(&input_text, delimiter)?;
@@ -61,6 +69,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 fn output_handler(line: &str) {
     print!("{}", line);
+}
+
+fn column_parser(input_text: &str, column_num: usize) -> Result<Vec<String>, fmt::Error> {
+    let mut result = Vec::new();
+    for line in input_text.lines() {
+        let words: Vec<&str> = line.split_whitespace().collect();
+        if words.len() > column_num {
+            result.push(words[column_num].to_string());
+        }
+    }
+    Ok(result)
 }
 
 fn sanitize_input(input_text: &str, delimiter: &str) -> Result<Vec<String>, fmt::Error> {
@@ -93,8 +112,6 @@ fn selection_handler(options: &[String]) -> Result<usize, Box<dyn std::error::Er
 }
 
 fn args_handler() -> ArgMatches {
-    
-
     Command::new("Pick")
         .version(env!("CARGO_PKG_VERSION"))
         .author("Steve Arnett - www.github.com/kg6zjl")
@@ -104,6 +121,12 @@ fn args_handler() -> ArgMatches {
             .short('d')
             .help("Specify the delimiter (default is newline)")
             .value_name("DELIMITER")
+        )
+        .arg(Arg::new("column")
+        .long("column")
+        .short('c')
+        .help("Specify the column")
+        .value_name("COLUMN")
         )
         .get_matches()
 }
