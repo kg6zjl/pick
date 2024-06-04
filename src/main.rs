@@ -115,7 +115,9 @@ fn args_handler() -> ArgMatches {
     Command::new("Pick")
         .version(env!("CARGO_PKG_VERSION"))
         .author("Steve Arnett - www.github.com/kg6zjl")
-        .about("Pick allows you to pipe in any newline or delimiter separated data and waits for you to make your selection before passing your decision to the next tool in your piped command chain.")
+        .about("Pick allows you to pipe in any newline or delimiter separated data and waits
+for you to make your selection before passing your decision to
+the next tool in your piped command chain.")
         .arg(Arg::new("delimiter")
             .long("delimiter")
             .short('d')

@@ -1,8 +1,9 @@
-[![Build](https://github.com/kg6zjl/pick/actions/workflows/build.yml/badge.svg)](https://github.com/kg6zjl/pick/actions/workflows/build.yml)
+[![Build](https://github.com/kg6zjl/pick/actions/workflows/build.yml/badge.svg)](https://github.com/kg6zjl/pick/actions/workflows/build.yml) [![Tests](https://github.com/kg6zjl/pick/actions/workflows/test.yml/badge.svg)](https://github.com/kg6zjl/pick/actions/workflows/test.yml)
 
 <p align="center">
   <img src="images/pick.jpg?raw=true" alt="Rust-y Pick" width="40%">
 </p>
+
 
 
 # Introducing Pick
@@ -14,6 +15,23 @@ Pick allows you to pipe in any newline or delimiter separated data and waits for
 Seeing as how others have developed similar concepts with the same name, we'll call this one the "Rust-y Pick".
 
 Enjoy!
+
+### Usage
+
+```
+$ pick --help
+Pick allows you to pipe in any newline or delimiter separated data and waits
+for you to make your selection before passing your decision to
+the next tool in your piped command chain.
+
+Usage: pick [OPTIONS]
+
+Options:
+  -d, --delimiter <DELIMITER>  Specify the delimiter (default is newline)
+  -c, --column <COLUMN>        Specify the column
+  -h, --help                   Print help
+  -V, --version                Print version
+```
 
 ### Examples
 
