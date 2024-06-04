@@ -62,10 +62,11 @@ expect "No input received. Exiting."
 
 ############ TEST 6 ############
 # tests for column use case
+exp_internal 1
 spawn bash -c "echo ' M tests/integration_test.sh\n?? foo' | $cmd -c 2"
 
 # Send the selection (e.g., the first option)
-send -- "1\r\r"
+send -- "1\r"
 
 expect "tests/integration_test.sh"
 
