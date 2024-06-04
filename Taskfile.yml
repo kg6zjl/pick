@@ -14,7 +14,7 @@ tasks:
   test:
     deps: [build]
     cmds:
-      - cargo --allow-dirty clippy --fix
+      - cargo clippy --fix
       - cargo test
       - ./tests/integration_test.sh pick
 
