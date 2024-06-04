@@ -5,6 +5,7 @@
 </p>
 
 
+
 # Introducing Pick
 
 Pick fills a gap in my terminal that maybe you didn't even know you had.
@@ -14,6 +15,23 @@ Pick allows you to pipe in any newline or delimiter separated data and waits for
 Seeing as how others have developed similar concepts with the same name, we'll call this one the "Rust-y Pick".
 
 Enjoy!
+
+### Usage
+
+```
+$ pick --help
+Pick allows you to pipe in any newline or delimiter separated data and waits
+for you to make your selection before passing your decision to
+the next tool in your piped command chain.
+
+Usage: pick [OPTIONS]
+
+Options:
+  -d, --delimiter <DELIMITER>  Specify the delimiter (default is newline)
+  -c, --column <COLUMN>        Specify the column
+  -h, --help                   Print help
+  -V, --version                Print version
+```
 
 ### Examples
 
