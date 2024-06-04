@@ -1,4 +1,4 @@
-[![Build](https://github.com/kg6zjl/pick/actions/workflows/build.yml/badge.svg)](https://github.com/kg6zjl/pick/actions/workflows/build.yml)
+[![Build](https://github.com/kg6zjl/pick/actions/workflows/build.yml/badge.svg)](https://github.com/kg6zjl/pick/actions/workflows/build.yml) [![Tests](https://github.com/kg6zjl/pick/actions/workflows/test.yml/badge.svg)](https://github.com/kg6zjl/pick/actions/workflows/test.yml)
 
 <p align="center">
   <img src="images/pick.jpg?raw=true" alt="Rust-y Pick" width="40%">
