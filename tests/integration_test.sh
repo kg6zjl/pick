@@ -65,7 +65,7 @@ expect "No input received. Exiting."
 spawn bash -c "echo ' M tests/integration_test.sh\n?? foo' | $cmd -c 2"
 
 # Send the selection (e.g., the first option)
-send -- "1\r"
+send -- "1\r\r"
 
 expect "tests/integration_test.sh"
 
