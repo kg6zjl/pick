@@ -97,7 +97,7 @@ jobs:
           name: v${{ env.VERSION }}
           draft: false
           prerelease: false
-          token: ${{ secrets.GHACTION_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Rename files to arch and os
         run: |
@@ -114,5 +114,5 @@ jobs:
         with:
           tag_name: v${{ env.VERSION }}
           files: releases/pick-*
-          token: ${{ secrets.GHACTION_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_unmatched_files: true
