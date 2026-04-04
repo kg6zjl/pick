@@ -13,7 +13,7 @@ incremental = false
 [dependencies]
 clap = "4.5.4"
 libc = "0.2"
-signal-hook = "0.3.17"
+signal-hook = "0.4.0"
 
 [dependencies.dialoguer]
 version = "0.11.0"
