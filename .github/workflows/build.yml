@@ -91,7 +91,7 @@ jobs:
       
       - name: Create Release with tag from Cargo.toml
         id: create_release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ env.VERSION }}
           name: v${{ env.VERSION }}
@@ -110,7 +110,7 @@ jobs:
           ls -lah releases/
 
       - name: Upload Release Asset
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ env.VERSION }}
           files: releases/pick-*
