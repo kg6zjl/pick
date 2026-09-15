@@ -16,5 +16,5 @@ libc = "0.2"
 signal-hook = "0.3.17"
 
 [dependencies.dialoguer]
-version = "0.11.0"
+version = "0.12.0"
 features = ["fuzzy-select"]
